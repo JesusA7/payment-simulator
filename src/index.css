@@ -1,0 +1,14 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  --color-gray-100: #e5e5e5;
+}
+
+body {
+  background-color: var(--color-gray-100);
+}
