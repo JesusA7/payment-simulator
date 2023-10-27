@@ -11,6 +11,7 @@ import { formatearNumero } from "../../utils/format";
 import HelpIcon from "@mui/icons-material/Help";
 import { addMonths } from "../../utils/format-date";
 import History from "../History/History";
+import jsPDF from "jspdf";
 
 const initialData = { capital: "", tasa: "", periodo: "" };
 const initialResults = { cuota: 0, intereses: 0, deuda: 0 };
@@ -32,6 +33,31 @@ function App() {
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
+  const handleShare = () => {
+    if (navigator.share) {
+      const doc = new jsPDF();
+      doc.fromHTML(componentRef.current, 10, 10);
+
+      const pdfDataUri = doc.output("datauristring");
+
+      navigator
+        .share({
+          title: "Cronograma de pagos",
+          text: "Es un cronograma de pagos detallado",
+          url: pdfDataUri,
+        })
+        .then(() => {
+          console.log("PDF compartido con éxito.");
+        })
+        .catch((error) => {
+          console.error("Error al compartir el PDF: ", error);
+        });
+    } else {
+      console.log(
+        "La función de compartir no está disponible en este navegador."
+      );
+    }
+  };
   const handleClickItemHistory = ({
     capital,
     periodo,
@@ -176,6 +202,7 @@ function App() {
                 Limpiar
               </Button>
               <Button onClick={handlePrint}>Imprimir</Button>
+              <Button onClick={handleShare}>Compartir</Button>
             </div>
           </Form>
         </div>
