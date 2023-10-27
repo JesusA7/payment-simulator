@@ -181,7 +181,7 @@ function App() {
         </div>
         <aside className="container__schedule" ref={componentRef}>
           <div className="container__card">
-            <Card title={"Cuota"} content={formatearNumero(results.cuota)} />
+            <Card title={"Cuotas"} content={formatearNumero(results.cuota)} />
             <Card
               title={"Total Intereses"}
               content={formatearNumero(results.intereses)}
