@@ -11,7 +11,7 @@ import { formatearNumero } from "../../utils/format";
 import HelpIcon from "@mui/icons-material/Help";
 import { addMonths } from "../../utils/format-date";
 import History from "../History/History";
-import jsPDF from "jspdf";
+import { saveAs } from "file-saver"; // Para la descarga del PDF
 
 const initialData = { capital: "", tasa: "", periodo: "" };
 const initialResults = { cuota: 0, intereses: 0, deuda: 0 };
@@ -33,25 +33,24 @@ function App() {
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
-  const handleShare = () => {
+  const handleShare = async () => {
+    // Generar un nombre único para el PDF
+    const pdfName = `contenido_imprimible_${new Date().getTime()}.pdf`;
+
+    // Descargar el PDF utilizando FileSaver.js (puedes utilizar otras bibliotecas)
+    const blob = new Blob([], { type: "application/pdf" });
+    saveAs(blob, pdfName);
     if (navigator.share) {
-      const doc = new jsPDF();
-      doc.fromHTML(componentRef.current, 10, 10);
-
-      const pdfDataUri = doc.output("datauristring");
-
-      navigator
-        .share({
+      try {
+        await navigator.share({
           title: "Cronograma de pagos",
           text: "Es un cronograma de pagos detallado",
-          url: pdfDataUri,
-        })
-        .then(() => {
-          console.log("PDF compartido con éxito.");
-        })
-        .catch((error) => {
-          console.error("Error al compartir el PDF: ", error);
+          files: [new File([blob], pdfName)],
         });
+        console.log("PDF compartido con éxito.");
+      } catch (error) {
+        console.error("Error al compartir el PDF: ", error);
+      }
     } else {
       console.log(
         "La función de compartir no está disponible en este navegador."
