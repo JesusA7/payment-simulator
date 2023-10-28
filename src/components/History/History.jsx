@@ -1,14 +1,20 @@
 import Styles from "./History.module.css";
 import { CardContent, Card } from "@mui/material";
-export default function History({ history, setShowHistory, setItemHistory }) {
+import DeleteIcon from "@mui/icons-material/Delete";
+import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
+export default function History({
+  history,
+  setShowHistory,
+  setItemHistory,
+  deleteItemHistory,
+}) {
   return (
     <div className={Styles.container__history}>
       <button onClick={() => setShowHistory(false)} style={{ height: 30 }} />
-      Historial
+      <h4>Historial</h4>
       {history &&
         history.map((elem, index) => {
-          const { capital, tasa, periodo, intereses, deuda, cuota, fecha } =
-            elem;
+          const { id, capital, tasa, periodo, cuota } = elem;
           return (
             <>
               <Card
@@ -20,30 +26,84 @@ export default function History({ history, setShowHistory, setItemHistory }) {
                   margin: "auto",
                   marginBottom: "1rem",
                 }}
-                onClick={() => {
-                  setItemHistory(elem);
-                }}
               >
-                <CardContent>
-                  <div>
-                    <div style={{ display: "flex", gap: "1rem" }}>
-                      <h5 style={{ margin: "0" }}>Capital: {capital}</h5>
-                      <p style={{ fontSize: ".8rem", margin: "0" }}>
-                        Tasa: {tasa}
-                      </p>
-                      <p style={{ fontSize: ".8rem", margin: "0" }}>
-                        Nro. Periodo: {periodo}
-                      </p>
+                <CardContent sx={{ padding: "1.5rem", width: "100%" }}>
+                  <div style={{ display: "flex", width: "100%" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: ".25rem",
+                        alignItems: "start",
+                        width: "100%",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: ".8rem",
+                          margin: "0",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          width: "100%",
+                        }}
+                      >
+                        <div>Capital:</div>
+                        <div>{capital.toFixed(2)}</div>
+                      </div>
+                      <div
+                        style={{
+                          fontSize: ".8rem",
+                          margin: "0",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          width: "100%",
+                        }}
+                      >
+                        <div>Tasa:</div> <div>{tasa.toFixed(2)}%</div>
+                      </div>
+
+                      <div
+                        style={{
+                          fontSize: ".8rem",
+                          margin: "0",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          width: "100%",
+                        }}
+                      >
+                        <div>N° Periodos:</div>
+                        <div>{periodo}</div>
+                      </div>
+                      <h5
+                        style={{
+                          margin: "0",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          width: "100%",
+                          borderTop: "1px solid #000",
+                        }}
+                      >
+                        <div>Cuota:</div> <div>{cuota.toFixed(2)}</div>
+                      </h5>
                     </div>
-                    <div style={{ display: "flex", gap: "1rem" }}>
-                      <h5 style={{ margin: "0" }}>Cuota: {cuota.toFixed(2)}</h5>
-                      <p style={{ fontSize: ".8rem", margin: "0" }}>
-                        Intereses: {intereses.toFixed(2)}
-                      </p>
-                      <p style={{ fontSize: ".8rem", margin: "0" }}>
-                        Total: {deuda.toFixed(2)}
-                      </p>
-                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginTop: ".5rem",
+                    }}
+                  >
+                    <ArrowCircleLeftIcon
+                      onClick={() => {
+                        setItemHistory(elem);
+                      }}
+                    />
+                    <DeleteIcon
+                      onClick={() => {
+                        deleteItemHistory({ id });
+                      }}
+                    />
                   </div>
                 </CardContent>
               </Card>

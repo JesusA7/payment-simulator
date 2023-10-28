@@ -6,6 +6,7 @@
   background-color: #1a73e8;
   color: #fff;
   cursor: pointer;
+  width: 8rem;
 }
 
 .button:hover {

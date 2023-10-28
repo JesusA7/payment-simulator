@@ -12,6 +12,8 @@ import HelpIcon from "@mui/icons-material/Help";
 import { addMonths } from "../../utils/format-date";
 import History from "../History/History";
 import { saveAs } from "file-saver"; // Para la descarga del PDF
+import PrintIcon from "@mui/icons-material/Print";
+import ShareIcon from "@mui/icons-material/Share";
 
 const initialData = { capital: "", tasa: "", periodo: "" };
 const initialResults = { cuota: 0, intereses: 0, deuda: 0 };
@@ -89,6 +91,11 @@ function App() {
     }
     setCron(arr);
   };
+  const handleDeleteItemHistory = ({ id }) => {
+    const newHistory = history.filter((value) => value.id !== id);
+    setHistory(newHistory);
+    localStorage.setItem("data", JSON.stringify(newHistory));
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     const { capital, periodo, tasa } = data;
@@ -99,6 +106,7 @@ function App() {
     setResults({ cuota, intereses, deuda });
 
     const itemHistory = {
+      id: globalThis.crypto.randomUUID(),
       capital: parseInt(capital),
       periodo: parseInt(periodo),
       tasa: parseInt(tasa),
@@ -151,14 +159,14 @@ function App() {
         }}
         className="container__main"
       >
-        <div>
+        <div className="container__form">
           <h2>
             Simulador Cuotas
             <HelpIcon />
           </h2>
           <Form onSubmit={handleSubmit}>
             <Input
-              title="Préstamo"
+              title="Préstamo Solicitado"
               name="capital"
               placeholder="Ingresa el capital"
               onChange={handleChange}
@@ -166,7 +174,7 @@ function App() {
               required
             />
             <Input
-              title="Tasa"
+              title="Tasa Efectiva Anual (%)"
               driverDescription="La tasa que debes ingresar es la Tasa Efectiva Anual (TEA)"
               name="tasa"
               placeholder="Ingresa la tasa efectiva anual"
@@ -176,9 +184,12 @@ function App() {
               min="0.01"
               value={data.tasa}
               required
+              aditionalContent={
+                data.tasa && `TEM: ${(convTasaToTEM(data) * 100).toFixed(2)}%`
+              }
             />
             <Input
-              title="Nro. Periodos"
+              title="Nro. Periodos (meses)"
               name="periodo"
               placeholder="Ingresa el nro. de periodos"
               onChange={handleChange}
@@ -188,7 +199,7 @@ function App() {
               step="1"
               required
             />
-            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+            <div className="container__button">
               <Button>Simular</Button>
               <Button
                 type="button"
@@ -200,8 +211,6 @@ function App() {
               >
                 Limpiar
               </Button>
-              <Button onClick={handlePrint}>Imprimir</Button>
-              <Button onClick={handleShare}>Compartir</Button>
             </div>
           </Form>
         </div>
@@ -220,6 +229,14 @@ function App() {
           <div className="container__table">
             <DenseTableSchedule rows={cron} />
           </div>
+          <div className="container__button">
+            <Button className="print-hide" onClick={handlePrint}>
+              <PrintIcon />
+            </Button>
+            <Button className="print-hide" onClick={handleShare}>
+              <ShareIcon />
+            </Button>
+          </div>
         </aside>
       </main>
       {showHistory && (
@@ -227,6 +244,7 @@ function App() {
           setItemHistory={handleClickItemHistory}
           history={history}
           setShowHistory={setShowHistory}
+          deleteItemHistory={handleDeleteItemHistory}
         />
       )}
       <footer>© Elaborado por Jesús Amable</footer>

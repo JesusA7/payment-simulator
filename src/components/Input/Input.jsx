@@ -13,6 +13,7 @@ export default function Input({
   placeholder,
   driverTitle = title,
   driverDescription = "",
+  aditionalContent = "",
   ...props
 }) {
   useEffect(() => {}, []);
@@ -51,6 +52,18 @@ export default function Input({
         {...props}
         autoComplete="off"
       />
+      {aditionalContent !== "" && (
+        <span
+          style={{
+            position: "absolute",
+            right: "0px",
+            bottom: ".5rem",
+            color: "rgba(0,0,0,.7)",
+          }}
+        >
+          {aditionalContent}
+        </span>
+      )}
     </div>
   );
 }
