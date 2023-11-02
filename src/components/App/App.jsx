@@ -8,13 +8,15 @@ import Card from "../Card/Card";
 import DenseTableSchedule from "../Table/Table";
 import { useReactToPrint } from "react-to-print";
 import { formatearNumero } from "../../utils/format";
-import HelpIcon from "@mui/icons-material/Help";
 import { addMonths } from "../../utils/format-date";
 import History from "../History/History";
 import { saveAs } from "file-saver"; // Para la descarga del PDF
+import HelpIcon from "@mui/icons-material/Help";
 import PrintIcon from "@mui/icons-material/Print";
 import ShareIcon from "@mui/icons-material/Share";
-
+import HistoryIcon from "@mui/icons-material/History";
+import { OnlinePayment } from "../../svg/icon";
+import { NoSearch } from "../../svg/image";
 const initialData = { capital: "", tasa: "", periodo: "" };
 const initialResults = { cuota: 0, intereses: 0, deuda: 0 };
 
@@ -67,7 +69,6 @@ function App() {
     cuota,
     intereses,
     deuda,
-    fecha,
   }) => {
     setData({ capital, tasa, periodo });
     setResults({ cuota, intereses, deuda });
@@ -143,14 +144,23 @@ function App() {
   return (
     <>
       <header style={{ display: "flex", justifyContent: "space-between" }}>
-        <a href="#" style={{ display: "flex" }}>
-          <img src="../../pago-en-linea.png" alt="icono simulador" width={64} />
-          <p>Simulador de Cuotas</p>
+        <a
+          href="#"
+          style={{ display: "flex", textDecoration: "none", color: "#1a73e8" }}
+        >
+          <OnlinePayment />
         </a>
         <button
+          style={{
+            cursor: "pointer",
+            border: "none",
+            padding: "0px",
+            backgroundColor: "transparent",
+          }}
           onClick={() => setShowHistory(!showHistory)}
-          style={{ height: 20 }}
-        />
+        >
+          <HistoryIcon />
+        </button>
       </header>
       <main
         style={{
@@ -215,20 +225,33 @@ function App() {
           </Form>
         </div>
         <aside className="container__schedule" ref={componentRef}>
-          <div className="container__card">
-            <Card title={"Cuotas"} content={formatearNumero(results.cuota)} />
-            <Card
-              title={"Total Intereses"}
-              content={formatearNumero(results.intereses)}
-            />
-            <Card
-              title={"Total Deuda"}
-              content={formatearNumero(results.deuda)}
-            />
-          </div>
-          <div className="container__table">
-            <DenseTableSchedule rows={cron} />
-          </div>
+          {cron.length !== 0 ? (
+            <>
+              <div className="container__card">
+                <Card
+                  title={"Cuotas"}
+                  content={formatearNumero(results.cuota)}
+                />
+                <Card
+                  title={"Total Intereses"}
+                  content={formatearNumero(results.intereses)}
+                />
+                <Card
+                  title={"Total Deuda"}
+                  content={formatearNumero(results.deuda)}
+                />
+              </div>
+              <div className="container__table">
+                <DenseTableSchedule rows={cron} />
+              </div>
+            </>
+          ) : (
+            <>
+              <NoSearch />
+              <span style={{display:'block', fontSize:'1.5rem', fontWeight:700}}>Ninguna simulación ha sido calculada</span>
+            </>
+          )}
+
           <div className="container__button">
             <Button className="print-hide" onClick={handlePrint}>
               <PrintIcon />
@@ -247,7 +270,7 @@ function App() {
           deleteItemHistory={handleDeleteItemHistory}
         />
       )}
-      <footer>© Elaborado por Jesús Amable</footer>
+      <footer style={{padding:'2rem 0', fontSize:'1rem', fontWeight:500}}>© Elaborado por Jesús Amable</footer>
     </>
   );
 }

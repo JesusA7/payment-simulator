@@ -1,4 +1,4 @@
-import * as React from "react";
+/* eslint-disable react/prop-types */
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -24,7 +24,6 @@ export default function DenseTableSchedule({ rows }) {
             <TableCell align="right">Saldo</TableCell>
             <TableCell align="right">Amortización</TableCell>
             <TableCell align="right">Intereses</TableCell>
-            <TableCell align="right">Seguro</TableCell>
             <TableCell align="right">Cuota</TableCell>
           </TableRow>
         </TableHead>
@@ -45,9 +44,6 @@ export default function DenseTableSchedule({ rows }) {
               <TableCell align="right">{formatearNumero(row.saldo)}</TableCell>
               <TableCell align="right">
                 {formatearNumero(row.amortizacion)}
-              </TableCell>
-              <TableCell align="right">
-                {formatearNumero(row.interes)}
               </TableCell>
               <TableCell align="right">
                 {formatearNumero(row.interes)}
