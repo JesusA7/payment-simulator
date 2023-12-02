@@ -15,6 +15,10 @@ import HelpIcon from "@mui/icons-material/Help";
 import PrintIcon from "@mui/icons-material/Print";
 import ShareIcon from "@mui/icons-material/Share";
 import HistoryIcon from "@mui/icons-material/History";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 import { OnlinePayment } from "../../svg/icon";
 import { NoSearch } from "../../svg/image";
 const initialData = { capital: "", tasa: "", periodo: "" };
@@ -227,15 +231,54 @@ function App() {
         <aside className="container__schedule" ref={componentRef}>
           {cron.length !== 0 ? (
             <>
-              <div className="container__details">
-                <ul>
-                  <li>Capital: {formatearNumero(parseInt(data.capital))}</li>
-                  <li>Tasa: {formatearNumero(parseInt(data.tasa))}</li>
-                  <li>Periodo: {formatearNumero(parseInt(data.periodo))}</li>
-                  <li>Cuota: {formatearNumero(results.cuota)}</li>
-                  <li>Intereses: {formatearNumero(results.intereses)}</li>
-                  <li>Deuda: {formatearNumero(results.deuda)}</li>
-                </ul>
+              <div
+                className="container__details"
+                style={{ display: "flex", width: "100%" }}
+              >
+                <div style={{ flex: 1 }}>
+                  <List component="nav" aria-label="main mailbox folders" dense>
+                    <ListItem>
+                      <ListItemText
+                        primary="Préstamo solicitado"
+                        secondary={formatearNumero(parseInt(data.capital))}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText
+                        primary="Tasa Efectiva Anual"
+                        secondary={formatearNumero(parseInt(data.tasa)) + "%"}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText
+                        primary="Nro. Periodo en meses"
+                        secondary={formatearNumero(parseInt(data.periodo))}
+                      />
+                    </ListItem>
+                  </List>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <List component="nav" aria-label="main mailbox folders" dense>
+                    <ListItem>
+                      <ListItemText
+                        primary="Cuota"
+                        secondary={formatearNumero(results.cuota)}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText
+                        primary="Intereses"
+                        secondary={formatearNumero(results.intereses)}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText
+                        primary="Deuda"
+                        secondary={formatearNumero(results.deuda)}
+                      />
+                    </ListItem>
+                  </List>
+                </div>
               </div>
               {/* <div className="container__card">
                 <Card
@@ -256,7 +299,7 @@ function App() {
               </div>
             </>
           ) : (
-            <>
+            <div style={{ display: "grid", placeContent: "center" }}>
               <NoSearch />
               <span
                 style={{
@@ -267,7 +310,7 @@ function App() {
               >
                 Ninguna simulación ha sido calculada
               </span>
-            </>
+            </div>
           )}
 
           <div className="container__button">
@@ -288,7 +331,14 @@ function App() {
           deleteItemHistory={handleDeleteItemHistory}
         />
       )}
-      <footer style={{ padding: "2rem 0", fontSize: "1rem", fontWeight: 500 }}>
+      <footer
+        style={{
+          padding: "2rem 0",
+          fontSize: "1rem",
+          fontWeight: 500,
+          textAlign: "center",
+        }}
+      >
         © Elaborado por Jesús Amable
       </footer>
     </>
