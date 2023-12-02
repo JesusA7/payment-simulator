@@ -185,6 +185,7 @@ function App() {
               placeholder="Ingresa el capital"
               onChange={handleChange}
               value={data.capital}
+              step="0.01"
               required
             />
             <Input
@@ -240,13 +241,13 @@ function App() {
                     <ListItem>
                       <ListItemText
                         primary="Préstamo solicitado"
-                        secondary={formatearNumero(parseInt(data.capital))}
+                        secondary={formatearNumero(parseFloat(data.capital))}
                       />
                     </ListItem>
                     <ListItem>
                       <ListItemText
                         primary="Tasa Efectiva Anual"
-                        secondary={formatearNumero(parseInt(data.tasa)) + "%"}
+                        secondary={formatearNumero(parseFloat(data.tasa)) + "%"}
                       />
                     </ListItem>
                     <ListItem>
