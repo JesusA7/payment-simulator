@@ -190,7 +190,7 @@ function App() {
               placeholder="Ingresa la tasa efectiva anual"
               onChange={handleChange}
               step="0.01"
-              max="100"
+              max="200"
               min="0.01"
               value={data.tasa}
               required
@@ -227,7 +227,17 @@ function App() {
         <aside className="container__schedule" ref={componentRef}>
           {cron.length !== 0 ? (
             <>
-              <div className="container__card">
+              <div className="container__details">
+                <ul>
+                  <li>Capital: {formatearNumero(parseInt(data.capital))}</li>
+                  <li>Tasa: {formatearNumero(parseInt(data.tasa))}</li>
+                  <li>Periodo: {formatearNumero(parseInt(data.periodo))}</li>
+                  <li>Cuota: {formatearNumero(results.cuota)}</li>
+                  <li>Intereses: {formatearNumero(results.intereses)}</li>
+                  <li>Deuda: {formatearNumero(results.deuda)}</li>
+                </ul>
+              </div>
+              {/* <div className="container__card">
                 <Card
                   title={"Cuotas"}
                   content={formatearNumero(results.cuota)}
@@ -240,7 +250,7 @@ function App() {
                   title={"Total Deuda"}
                   content={formatearNumero(results.deuda)}
                 />
-              </div>
+              </div> */}
               <div className="container__table">
                 <DenseTableSchedule rows={cron} />
               </div>
@@ -248,7 +258,15 @@ function App() {
           ) : (
             <>
               <NoSearch />
-              <span style={{display:'block', fontSize:'1.5rem', fontWeight:700}}>Ninguna simulación ha sido calculada</span>
+              <span
+                style={{
+                  display: "block",
+                  fontSize: "1.5rem",
+                  fontWeight: 700,
+                }}
+              >
+                Ninguna simulación ha sido calculada
+              </span>
             </>
           )}
 
@@ -270,7 +288,9 @@ function App() {
           deleteItemHistory={handleDeleteItemHistory}
         />
       )}
-      <footer style={{padding:'2rem 0', fontSize:'1rem', fontWeight:500}}>© Elaborado por Jesús Amable</footer>
+      <footer style={{ padding: "2rem 0", fontSize: "1rem", fontWeight: 500 }}>
+        © Elaborado por Jesús Amable
+      </footer>
     </>
   );
 }
