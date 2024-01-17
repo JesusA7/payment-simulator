@@ -3,24 +3,43 @@ import Styles from "./History.module.css";
 import { CardContent, Card } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
-import LogoutIcon from '@mui/icons-material/Logout';
+import LogoutIcon from "@mui/icons-material/Logout";
 export default function History({
   history,
   setShowHistory,
   setItemHistory,
   deleteItemHistory,
 }) {
-  
   return (
     <div className={Styles.container__history}>
-      <div style={{display:'flex', justifyContent:'center', position:'relative', padding:'1.5rem 0'}}>
-        <button onClick={() => setShowHistory(false)} style={{ height: '1.5rem', background:'transparent', border:'none', position:'absolute', left:'16px', cursor:'pointer'}} ><LogoutIcon color="info" sx={{height:'1.5rem'}}/></button>
-      <h4 style={{padding:'0px', margin:'0px', fontSize:'1.25rem'}}>Historial</h4>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          position: "relative",
+          padding: "1.5rem 0",
+        }}
+      >
+        <button
+          onClick={() => setShowHistory(false)}
+          style={{
+            height: "1.5rem",
+            background: "transparent",
+            border: "none",
+            position: "absolute",
+            left: "16px",
+            cursor: "pointer",
+          }}
+        >
+          <LogoutIcon color="info" sx={{ height: "1.5rem" }} />
+        </button>
+        <h4 style={{ padding: "0px", margin: "0px", fontSize: "1.25rem" }}>
+          Historial
+        </h4>
       </div>
-      {
-      history &&
+      {history &&
         [...history].reverse().map((elem, index) => {
-          const { id, capital, tasa, periodo, cuota } = elem;
+          const { id, capital, tasa, fecha, periodo, cuota } = elem;
           return (
             <>
               <Card
@@ -65,7 +84,7 @@ export default function History({
                           width: "100%",
                         }}
                       >
-                        <div>Tasa:</div> <div>{tasa.toFixed(2)}%</div>
+                        <div>TEA:</div> <div>{tasa.toFixed(2)}%</div>
                       </div>
 
                       <div
@@ -77,8 +96,20 @@ export default function History({
                           width: "100%",
                         }}
                       >
-                        <div>N° Periodos:</div>
+                        <div>Periodos:</div>
                         <div>{periodo}</div>
+                      </div>
+                      <div
+                        style={{
+                          fontSize: ".8rem",
+                          margin: "0",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          width: "100%",
+                        }}
+                      >
+                        <div>Fecha:</div>
+                        <div>{fecha}</div>
                       </div>
                       <h5
                         style={{
@@ -109,7 +140,6 @@ export default function History({
                     <DeleteIcon
                       onClick={() => {
                         deleteItemHistory({ id });
-                        
                       }}
                     />
                   </div>

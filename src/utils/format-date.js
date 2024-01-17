@@ -1,7 +1,7 @@
 export function addMonths(date, months) {
   const newDate = new Date(date);
   newDate.setMonth(date.getMonth() + months);
-  // console.log(date, newDate);
+  console.log(months, date, newDate);
   if (date.getDate() !== newDate.getDate()) {
     newDate.setDate(0);
   }
@@ -14,4 +14,19 @@ function formatDateToDDMMYYYY(date) {
   const year = date.getFullYear();
 
   return `${day}/${month}/${year}`;
+}
+
+export function revertDate() {
+  // Supongamos que tienes un objeto Date
+  const dateObject = new Date();
+
+  // Obtiene los componentes de la fecha (día, mes, año)
+  const day = dateObject.getDate().toString().padStart(2, "0");
+  const month = (dateObject.getMonth() + 1).toString().padStart(2, "0"); // ¡Recuerda que los meses van de 0 a 11!
+  const year = dateObject.getFullYear();
+
+  // Formatea la fecha como YYYY-MM-DD (formato aceptado por input date)
+  const formatDate = `${year}-${month}-${day}`;
+
+  return formatDate;
 }

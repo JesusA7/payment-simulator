@@ -8,7 +8,7 @@ import Card from "../Card/Card";
 import DenseTableSchedule from "../Table/Table";
 import { useReactToPrint } from "react-to-print";
 import { formatearNumero } from "../../utils/format";
-import { addMonths } from "../../utils/format-date";
+import { addMonths, revertDate } from "../../utils/format-date";
 import History from "../History/History";
 import { saveAs } from "file-saver"; // Para la descarga del PDF
 import HelpIcon from "@mui/icons-material/Help";
@@ -21,7 +21,12 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { OnlinePayment } from "../../svg/icon";
 import { NoSearch } from "../../svg/image";
-const initialData = { capital: "", tasa: "", periodo: "" };
+const initialData = {
+  capital: "",
+  tasa: "",
+  periodo: "",
+  fecha: revertDate(new Date()),
+};
 const initialResults = { cuota: 0, intereses: 0, deuda: 0 };
 
 function App() {
@@ -69,12 +74,13 @@ function App() {
     capital,
     periodo,
     tasa,
+    fecha,
     TEM,
     cuota,
     intereses,
     deuda,
   }) => {
-    setData({ capital, tasa, periodo });
+    setData({ capital, tasa, periodo, fecha });
     setResults({ cuota, intereses, deuda });
     let arr = [];
     let saldo = parseFloat(capital);
@@ -83,10 +89,10 @@ function App() {
       saldo = i === 1 ? saldo : saldo - amortizacion;
       const interes = saldo * TEM;
       amortizacion = cuota - interes;
-      const fecha = addMonths(new Date(), i);
+      const fechaSiguiente = addMonths(new Date(fecha + "T00:00:00"), i);
       const arreglo = {
         nro: i,
-        fecha,
+        fecha: fechaSiguiente,
         saldo,
         amortizacion,
         interes,
@@ -103,7 +109,7 @@ function App() {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { capital, periodo, tasa } = data;
+    const { capital, periodo, tasa, fecha } = data;
     const TEM = convTasaToTEM({ tasa });
     const cuota = obtenerCuota(data);
     const intereses = cuota * periodo - capital;
@@ -112,14 +118,14 @@ function App() {
 
     const itemHistory = {
       id: globalThis.crypto.randomUUID(),
-      capital: parseInt(capital),
-      periodo: parseInt(periodo),
-      tasa: parseInt(tasa),
+      capital: parseFloat(capital),
+      periodo: parseFloat(periodo),
+      tasa: parseFloat(tasa),
       TEM,
       cuota,
       intereses,
       deuda,
-      fecha: new Date(),
+      fecha,
     };
     const newHistory = [...history, itemHistory];
     setHistory(newHistory);
@@ -132,10 +138,10 @@ function App() {
       saldo = i === 1 ? saldo : saldo - amortizacion;
       const interes = saldo * TEM;
       amortizacion = cuota - interes;
-      const fecha = addMonths(new Date(), i);
+      const fechaSiguiente = addMonths(new Date(fecha + "T00:00:00"), i);
       const arreglo = {
         nro: i,
-        fecha,
+        fecha: fechaSiguiente,
         saldo,
         amortizacion,
         interes,
@@ -147,7 +153,12 @@ function App() {
   };
   return (
     <>
-      <header style={{ display: "flex", justifyContent: "space-between" }}>
+      <header
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
         <a
           href="#"
           style={{ display: "flex", textDecoration: "none", color: "#1a73e8" }}
@@ -182,6 +193,7 @@ function App() {
             <Input
               title="Préstamo Solicitado"
               name="capital"
+              type="number"
               placeholder="Ingresa el capital"
               onChange={handleChange}
               value={data.capital}
@@ -192,6 +204,7 @@ function App() {
               title="Tasa Efectiva Anual (%)"
               driverDescription="La tasa que debes ingresar es la Tasa Efectiva Anual (TEA)"
               name="tasa"
+              type="number"
               placeholder="Ingresa la tasa efectiva anual"
               onChange={handleChange}
               step="0.01"
@@ -206,12 +219,23 @@ function App() {
             <Input
               title="Nro. Periodos (meses)"
               name="periodo"
+              type="number"
               placeholder="Ingresa el nro. de periodos"
               onChange={handleChange}
               value={data.periodo}
               max="360"
               min="1"
               step="1"
+              required
+            />
+            <Input
+              title="Fecha Inicio"
+              name="fecha"
+              type="date"
+              placeholder="Ingresa la fecha de inicio del préstamo"
+              onChange={handleChange}
+              value={data.fecha}
+              step="0.01"
               required
             />
             <div className="container__button">
@@ -281,20 +305,6 @@ function App() {
                   </List>
                 </div>
               </div>
-              {/* <div className="container__card">
-                <Card
-                  title={"Cuotas"}
-                  content={formatearNumero(results.cuota)}
-                />
-                <Card
-                  title={"Total Intereses"}
-                  content={formatearNumero(results.intereses)}
-                />
-                <Card
-                  title={"Total Deuda"}
-                  content={formatearNumero(results.deuda)}
-                />
-              </div> */}
               <div className="container__table">
                 <DenseTableSchedule rows={cron} />
               </div>

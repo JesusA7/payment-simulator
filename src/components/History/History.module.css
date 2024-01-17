@@ -10,3 +10,7 @@
   overflow-y: scroll;
   margin-bottom: 1rem;
 }
+
+.container__history::-webkit-scrollbar {
+  display: none;
+}

@@ -47,7 +47,6 @@ export default function Input({
       </div>
       <input
         name={name}
-        type="number"
         placeholder={placeholder}
         {...props}
         autoComplete="off"
