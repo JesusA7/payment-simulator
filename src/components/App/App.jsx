@@ -208,7 +208,7 @@ function App() {
               placeholder="Ingresa la tasa efectiva anual"
               onChange={handleChange}
               step="0.01"
-              max="200"
+              max="300"
               min="0.01"
               value={data.tasa}
               required
@@ -311,7 +311,9 @@ function App() {
             </>
           ) : (
             <div style={{ display: "grid", placeContent: "center" }}>
-              <NoSearch />
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <NoSearch />
+              </div>
               <span
                 style={{
                   display: "block",
