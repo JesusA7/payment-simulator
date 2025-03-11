@@ -145,19 +145,20 @@ function App() {
       console.log("Generando blob del PDF...");
       const pdfBlob = doc.output('blob');
       const pdfName = `cronograma_pagos_${Date.now()}.pdf`;
+      const arrayBuffer = await pdfBlob.arrayBuffer();
+      const file = new File([new Uint8Array(arrayBuffer)], pdfName, { type: 'application/pdf' });
       console.log("Blob del PDF generado");
 
       // Intentar compartir
       if (navigator?.share && navigator.canShare) {
         console.log("Dispositivo soporta Web Share API");
         try {
-          const file = new File([pdfBlob], pdfName, { type: 'application/pdf' });
           await navigator.share({
             files: [file],
             title: 'Cronograma de Pagos'
           });
-          console.log("PDF compartido exitosamente");
-          return;
+        console.log("PDF compartido exitosamente");
+            return;
         } catch (shareError) {
           if (shareError.name === 'AbortError') {
             console.log("Usuario canceló el compartir");
@@ -172,7 +173,6 @@ function App() {
       // Descargar
       saveAs(pdfBlob, pdfName);
       console.log("PDF descargado exitosamente");
-
     } catch (error) {
       console.error("Error general en handleShare:", error);
       alert("No se pudo generar el PDF. Por favor, intente nuevamente.");
