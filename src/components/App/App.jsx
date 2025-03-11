@@ -17,10 +17,12 @@ import ShareIcon from "@mui/icons-material/Share";
 import HistoryIcon from "@mui/icons-material/History";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { OnlinePayment } from "../../svg/icon";
 import { NoSearch } from "../../svg/image";
+import { jsPDF as JsPDF } from "jspdf";
+import { default as autoTable } from "jspdf-autotable";
+
 const initialData = {
   capital: "",
   tasa: "",
@@ -47,27 +49,133 @@ function App() {
     content: () => componentRef.current,
   });
   const handleShare = async () => {
-    // Generar un nombre único para el PDF
-    const pdfName = `contenido_imprimible_${new Date().getTime()}.pdf`;
-
-    // Descargar el PDF utilizando FileSaver.js (puedes utilizar otras bibliotecas)
-    const blob = new Blob([], { type: "application/pdf" });
-    saveAs(blob, pdfName);
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: "Cronograma de pagos",
-          text: "Es un cronograma de pagos detallado",
-          files: [new File([blob], pdfName)],
-        });
-        console.log("PDF compartido con éxito.");
-      } catch (error) {
-        console.error("Error al compartir el PDF: ", error);
+    try {
+      // Validar datos
+      if (!data.capital || !data.tasa || !data.periodo) {
+        console.log("Datos incompletos:", { data });
+        alert("Por favor, completa todos los campos antes de generar el PDF.");
+        return;
       }
-    } else {
-      console.log(
-        "La función de compartir no está disponible en este navegador."
-      );
+
+      if (!cron || !Array.isArray(cron) || cron.length === 0) {
+        console.log("Cronograma inválido:", { cron });
+        alert("Por favor, genera primero el cronograma de pagos antes de compartir.");
+        return;
+      }
+
+      if (!results || !results.intereses || !results.deuda) {
+        console.log("Resultados inválidos:", { results });
+        alert("Error: No se encontraron los resultados del cálculo.");
+        return;
+      }
+
+      console.log("Iniciando generación de PDF con datos:", {
+        capital: data.capital,
+        tasa: data.tasa,
+        periodo: data.periodo,
+        filas: cron.length
+      });
+
+      // Crear documento PDF
+      const doc = new JsPDF();
+      console.log("Documento PDF creado");
+      
+      try {
+        // Título
+        doc.setFontSize(16);
+        doc.text("Cronograma de Pagos", 105, 20, { align: 'center' });
+        
+        // Datos del préstamo
+        doc.setFontSize(12);
+        doc.text(`Capital: S/ ${formatearNumero(data.capital)}`, 20, 35);
+        doc.text(`Tasa: ${data.tasa}%`, 20, 45);
+        doc.text(`Periodo: ${data.periodo} meses`, 20, 55);
+        console.log("Información básica agregada al PDF");
+
+        // Preparar datos de tabla
+        const tableData = cron.map((row, index) => {
+          try {
+            const fecha = new Date(row.fecha);
+            return [
+              row.nro,
+              fecha instanceof Date && !isNaN(fecha) ? fecha.toLocaleDateString() : "-",
+              formatearNumero(row.saldo),
+              formatearNumero(row.amortizacion),
+              formatearNumero(row.interes),
+              formatearNumero(row.cuota)
+            ];
+          } catch (rowError) {
+            console.error(`Error procesando fila ${index}:`, rowError);
+            return [index + 1, "-", "-", "-", "-", "-"];
+          }
+        });
+        console.log("Datos de tabla preparados:", { filas: tableData.length });
+
+        // Generar tabla
+        autoTable(doc, {
+          startY: 65,
+          head: [["N°", "Fecha", "Saldo", "Amort.", "Interés", "Cuota"]],
+          body: tableData,
+          theme: 'grid',
+          styles: {
+            fontSize: 8,
+            cellPadding: 2
+          },
+          didDrawCell: (data) => {
+            if (!data.cell.text || data.cell.text.length === 0) {
+              console.warn(`Celda vacía detectada en fila ${data.row.index}, columna ${data.column.index}`);
+            }
+          }
+        });
+        console.log("Tabla generada exitosamente");
+
+        // Totales
+        const finalY = doc.lastAutoTable.finalY + 10;
+        doc.setFontSize(12);
+        doc.text(`Total Intereses: S/ ${formatearNumero(results.intereses)}`, 20, finalY);
+        doc.text(`Total a Pagar: S/ ${formatearNumero(results.deuda)}`, 20, finalY + 10);
+        console.log("Totales agregados al PDF");
+
+      } catch (pdfError) {
+        console.error("Error durante la generación del PDF:", pdfError);
+        throw new Error("Error al generar el contenido del PDF");
+      }
+
+      // Generar blob
+      console.log("Generando blob del PDF...");
+      const pdfBlob = doc.output('blob');
+      const pdfName = `cronograma_pagos_${Date.now()}.pdf`;
+      console.log("Blob del PDF generado");
+
+      // Intentar compartir
+      if (navigator?.share && navigator.canShare) {
+        console.log("Dispositivo soporta Web Share API");
+        try {
+          const file = new File([pdfBlob], pdfName, { type: 'application/pdf' });
+          await navigator.share({
+            files: [file],
+            title: 'Cronograma de Pagos'
+          });
+          console.log("PDF compartido exitosamente");
+          return;
+        } catch (shareError) {
+          if (shareError.name === 'AbortError') {
+            console.log("Usuario canceló el compartir");
+            return;
+          }
+          console.warn("Error al compartir, intentando descarga:", shareError);
+        }
+      } else {
+        console.log("Dispositivo no soporta Web Share API, procediendo con descarga");
+      }
+
+      // Descargar
+      saveAs(pdfBlob, pdfName);
+      console.log("PDF descargado exitosamente");
+
+    } catch (error) {
+      console.error("Error general en handleShare:", error);
+      alert("No se pudo generar el PDF. Por favor, intente nuevamente.");
     }
   };
   const handleClickItemHistory = ({
@@ -352,7 +460,7 @@ function App() {
           textAlign: "center",
         }}
       >
-        © Elaborado por Jesús Amable
+        Elaborado por Jesús Amable
       </footer>
     </>
   );

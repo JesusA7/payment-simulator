@@ -14,3 +14,20 @@
 .container__history::-webkit-scrollbar {
   display: none;
 }
+
+.history_list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+.history_item {
+  width: 100%;
+  transition: transform 0.2s ease;
+}
+
+.history_item:hover {
+  transform: scale(1.02);
+}

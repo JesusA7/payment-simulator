@@ -37,117 +37,118 @@ export default function History({
           Historial
         </h4>
       </div>
-      {history &&
-        [...history].reverse().map((elem, index) => {
-          const { id, capital, tasa, fecha, periodo, cuota } = elem;
-          return (
-            <>
-              <Card
-                key={index}
-                sx={{
-                  display: "flex",
-                  width: "80%",
-                  cursor: "pointer",
-                  margin: "auto",
-                  marginBottom: "1rem",
-                }}
-              >
-                <CardContent sx={{ padding: "1.5rem", width: "100%" }}>
-                  <div style={{ display: "flex", width: "100%" }}>
+      <div className={Styles.history_list}>
+        {history &&
+          [...history].reverse().map((elem) => {
+            const { id, capital, tasa, fecha, periodo, cuota } = elem;
+            return (
+              <div key={id} className={Styles.history_item}>
+                <Card
+                  sx={{
+                    display: "flex",
+                    width: "80%",
+                    cursor: "pointer",
+                    margin: "auto",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  <CardContent sx={{ padding: "1.5rem", width: "100%" }}>
+                    <div style={{ display: "flex", width: "100%" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: ".25rem",
+                          alignItems: "start",
+                          width: "100%",
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: ".8rem",
+                            margin: "0",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                          }}
+                        >
+                          <div>Capital:</div>
+                          <div>{capital.toFixed(2)}</div>
+                        </div>
+                        <div
+                          style={{
+                            fontSize: ".8rem",
+                            margin: "0",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                          }}
+                        >
+                          <div>TEA:</div> <div>{tasa.toFixed(2)}%</div>
+                        </div>
+
+                        <div
+                          style={{
+                            fontSize: ".8rem",
+                            margin: "0",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                          }}
+                        >
+                          <div>Periodos:</div>
+                          <div>{periodo}</div>
+                        </div>
+                        <div
+                          style={{
+                            fontSize: ".8rem",
+                            margin: "0",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                          }}
+                        >
+                          <div>Fecha:</div>
+                          <div>{fecha}</div>
+                        </div>
+                        <h5
+                          style={{
+                            margin: "0",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                            borderTop: "1px solid #000",
+                          }}
+                        >
+                          <div>Cuota:</div> <div>{cuota.toFixed(2)}</div>
+                        </h5>
+                      </div>
+                    </div>
                     <div
                       style={{
                         display: "flex",
-                        flexDirection: "column",
-                        gap: ".25rem",
-                        alignItems: "start",
-                        width: "100%",
+                        justifyContent: "space-between",
+                        marginTop: ".5rem",
                       }}
                     >
-                      <div
-                        style={{
-                          fontSize: ".8rem",
-                          margin: "0",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          width: "100%",
+                      <ArrowCircleLeftIcon
+                        onClick={() => {
+                          setItemHistory(elem);
+                          setShowHistory(false);
                         }}
-                      >
-                        <div>Capital:</div>
-                        <div>{capital.toFixed(2)}</div>
-                      </div>
-                      <div
-                        style={{
-                          fontSize: ".8rem",
-                          margin: "0",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          width: "100%",
+                      />
+                      <DeleteIcon
+                        onClick={() => {
+                          deleteItemHistory({ id });
                         }}
-                      >
-                        <div>TEA:</div> <div>{tasa.toFixed(2)}%</div>
-                      </div>
-
-                      <div
-                        style={{
-                          fontSize: ".8rem",
-                          margin: "0",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          width: "100%",
-                        }}
-                      >
-                        <div>Periodos:</div>
-                        <div>{periodo}</div>
-                      </div>
-                      <div
-                        style={{
-                          fontSize: ".8rem",
-                          margin: "0",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          width: "100%",
-                        }}
-                      >
-                        <div>Fecha:</div>
-                        <div>{fecha}</div>
-                      </div>
-                      <h5
-                        style={{
-                          margin: "0",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          width: "100%",
-                          borderTop: "1px solid #000",
-                        }}
-                      >
-                        <div>Cuota:</div> <div>{cuota.toFixed(2)}</div>
-                      </h5>
+                      />
                     </div>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      marginTop: ".5rem",
-                    }}
-                  >
-                    <ArrowCircleLeftIcon
-                      onClick={() => {
-                        setItemHistory(elem);
-                        setShowHistory(false);
-                      }}
-                    />
-                    <DeleteIcon
-                      onClick={() => {
-                        deleteItemHistory({ id });
-                      }}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </>
-          );
-        })}
+                  </CardContent>
+                </Card>
+              </div>
+            );
+          })}
+      </div>
     </div>
   );
 }
